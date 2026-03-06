@@ -730,6 +730,7 @@ window.addEventListener("DOMContentLoaded", () => {
   initStories();
   initProfileAvatarChange();
   initChat();
+  initSearch();
 });
 function initSearch() {
   const input = document.getElementById("searchInput");
@@ -772,4 +773,4 @@ function initSearch() {
   });
 }
 
-initSearch();
+
