@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>SSChat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body class="app gradient-mesh">
+  <div class="app-shell">
+    <!-- AUTH -->
+    <main class="auth-screen" id="authScreen">
+      <div class="auth-card shadow-soft gradient-border">
+        <div class="auth-brand">
+          <div class="brand-logo">ssc</div>
+          <div>
+            <h1 class="brand-title">SSC</h1>
+            
+          </div>
+        </div>
+
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab active" data-auth-tab="login" type="button">Đăng nhập</button>
+          <button class="auth-tab" data-auth-tab="register" type="button">Đăng ký</button>
+        </div>
+
+        <form class="auth-form" id="loginForm" autocomplete="off">
+          <div class="field-group">
+            <label for="loginUsername">Tên đăng nhập</label>
+            <input id="loginUsername" name="username" type="text" required placeholder="vd: admin" />
+            <p class="field-hint">Không dùng dấu cách
+          </div>
+          <div class="field-group">
+            <label for="loginPassword">Mật khẩu</label>
+            <input id="loginPassword" name="password" type="password" required placeholder="••••••••" />
+          </div>
+          <button class="btn primary w-full" type="submit">Vào SSC</button>
+        </form>
+
+        <form class="auth-form hidden" id="registerForm" autocomplete="off">
+          <div class="field-group inline">
+            <div>
+              <label for="registerUsername">Tên đăng nhập</label>
+              <input id="registerUsername" name="username" type="text" required placeholder="không dấu cách" />
+              <p class="field-hint">Tên này sẽ hiển thị công khai.</p>
+            </div>
+            <div>
+              <label for="registerAvatar">Avatar</label>
+              <input id="registerAvatar" name="avatar" type="file" accept="image/*" />
+              <p class="field-hint">Chọn ảnh từ máy của bạn.</p>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="registerPassword">Mật khẩu</label>
+            <input id="registerPassword" name="password" type="password" required />
+          </div>
+          <button class="btn primary w-full" type="submit">Tạo tài khoản</button>
+        </form>
+      </div>
+    </main>
+
+    <!-- APP -->
+    <div class="app-layout hidden" id="appLayout">
+      <header class="topbar shadow-soft">
+        <div class="topbar-left">
+          <div class="brand-logo brand-logo-small">ssc</div>
+          <span class="topbar-title">SSC</span>
+        </div>
+        <div class="topbar-center">
+          <input class="search-input" type="search" placeholder="Tìm người dùng, nhóm, bài viết..." />
+        </div>
+        <div class="topbar-right">
+          <button class="icon-button" id="callButton" title="Gọi nhanh">📞</button>
+          <div class="user-pill" id="currentUserPill">
+            <div class="avatar avatar-sm" id="currentUserAvatar"></div>
+            <span class="user-pill-name" id="currentUsername">user</span>
+          </div>
+          <button class="btn ghost" id="logoutButton" type="button">Đăng xuất</button>
+        </div>
+      </header>
+
+      <div class="app-main">
+        <nav class="sidebar-nav" aria-label="Điều hướng chính">
+          <button class="nav-item active" data-page="feed" type="button">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Feed</span>
+          </button>
+          <button class="nav-item" data-page="chat" type="button">
+            <span class="nav-icon">💬</span>
+            <span class="nav-label">Chat</span>
+          </button>
+          <button class="nav-item" data-page="story" type="button">
+            <span class="nav-icon">✨</span>
+            <span class="nav-label">Story</span>
+          </button>
+          <button class="nav-item" data-page="profile" type="button">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Hồ sơ</span>
+          </button>
+          <button class="nav-item" data-page="admin" type="button" id="adminNav" style="display:none">
+            <span class="nav-icon">🛡️</span>
+            <span class="nav-label">Admin</span>
+          </button>
+        </nav>
+
+        <!-- FEED -->
+        <section class="page" id="page-feed" aria-label="Trang feed">
+          <div class="stories-bar">
+            <button class="story-card story-card-add" id="addStoryFromFeed" type="button">
+              <div class="story-avatar avatar avatar-md">+</div>
+              <span>Tạo story</span>
+            </button>
+            <div class="stories-scroll" id="storiesFeedList"></div>
+          </div>
+
+          <div class="composer-card shadow-soft">
+            <div class="composer-top">
+              <div class="avatar avatar-md" id="composerAvatar"></div>
+              <textarea id="postContent" rows="2" placeholder="Hôm nay bạn muốn chia sẻ điều gì?"></textarea>
+            </div>
+            <div class="composer-bottom">
+              <label class="btn subtle file-label">
+                📷 Ảnh
+                <input id="postImage" type="file" accept="image/*" hidden />
+              </label>
+              <div class="composer-actions">
+                <span class="char-count" id="postCharCount">0/280</span>
+                <button class="btn primary" id="postButton" type="button">Đăng</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="feed-list" id="feedList"></div>
+        </section>
+
+        <!-- CHAT -->
+        <section class="page hidden" id="page-chat" aria-label="Trang chat">
+          <div class="chat-layout">
+            <aside class="chat-sidebar">
+              <div class="chat-sidebar-header">
+                <h2>Chat & nhóm</h2>
+                <button class="icon-button" id="newChatGroup" type="button" title="Tạo nhóm chat">➕</button>
+              </div>
+              <div class="chat-list" id="chatList"></div>
+            </aside>
+
+            <div class="chat-main">
+              <div class="chat-empty" id="chatEmptyState">
+                <h3>Chọn một cuộc trò chuyện</h3>
+                <p>Bạn có thể nhắn tin hoặc gọi điện với bất kỳ ai, không cần kết bạn.</p>
+              </div>
+              <div class="chat-window hidden" id="chatWindow">
+                <header class="chat-header">
+                  <div>
+                    <div class="chat-target-name" id="chatTargetName">Tên người dùng</div>
+                    <div class="chat-target-meta" id="chatTargetMeta">Đang hoạt động</div>
+                  </div>
+                  <div class="chat-header-actions">
+                    <button class="btn subtle" id="audioCallButton" type="button">Gọi thoại</button>
+                    <button class="btn subtle" id="videoCallButton" type="button">Gọi video</button>
+                  </div>
+                </header>
+                <div class="chat-messages" id="chatMessages"></div>
+                <form class="chat-input-bar" id="chatForm">
+                  <input id="chatMessageInput" type="text" placeholder="Nhắn tin..." autocomplete="off" />
+                  <button class="btn primary" type="submit">Gửi</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STORY -->
+        <section class="page hidden" id="page-story" aria-label="Trang story">
+          <div class="story-layout">
+            <div class="story-create card shadow-soft">
+              <h2>Story của bạn</h2>
+              <p class="muted">Story tồn tại 24 giờ trên trang cá nhân và được lưu trong kho lưu trữ.</p>
+              <form id="storyForm" class="story-form">
+                <div class="field-group">
+                  <label for="storyText">Nội dung</label>
+                  <textarea id="storyText" rows="2" placeholder="Viết gì đó ngắn gọn..."></textarea>
+                </div>
+                <div class="field-group">
+                  <label for="storyImage">Ảnh (tuỳ chọn)</label>
+                  <input id="storyImage" type="file" accept="image/*" />
+                </div>
+                <button class="btn primary w-full" type="submit">Đăng story</button>
+              </form>
+            </div>
+
+            <div class="story-columns">
+              <div class="card shadow-soft">
+                <h3>Story đang hiển thị</h3>
+                <div id="activeStories" class="story-list"></div>
+              </div>
+
+              <div class="card shadow-soft">
+                <h3>Kho lưu trữ</h3>
+                <p class="muted">Story hết hạn vẫn được lưu ở đây. Bạn có thể thêm vào highlight.</p>
+                <div id="archivedStories" class="story-list"></div>
+              </div>
+
+              <div class="card shadow-soft">
+                <h3>Highlight trên hồ sơ</h3>
+                <form id="highlightForm" class="highlight-form">
+                  <div class="field-group">
+                    <label for="highlightName">Tên highlight</label>
+                    <input id="highlightName" type="text" placeholder="Du lịch, 2025..." />
+                  </div>
+                  <button class="btn subtle w-full" type="submit">Tạo highlight</button>
+                </form>
+                <div id="highlightList" class="highlight-list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="page hidden" id="page-profile" aria-label="Trang hồ sơ cá nhân">
+          <div class="profile-header card shadow-soft">
+            <div class="profile-cover"></div>
+            <div class="profile-main">
+              <div class="avatar avatar-lg" id="profileAvatar"></div>
+              <div>
+                <h2 id="profileUsername">username</h2>
+                <p class="muted">Hồ sơ cá nhân của bạn trên SSC.</p>
+              </div>
+              <div class="profile-actions">
+                <label class="btn subtle file-label">
+                  Đổi avatar
+                  <input id="profileAvatarInput" type="file" accept="image/*" hidden />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-highlights card shadow-soft">
+            <h3>Highlight</h3>
+            <div id="profileHighlightStrip" class="highlight-strip"></div>
+          </div>
+
+          <div class="profile-feed card shadow-soft">
+            <h3>Bài viết của bạn</h3>
+            <div id="profilePosts" class="feed-list"></div>
+          </div>
+        </section>
+
+        <!-- ADMIN -->
+        <section class="page hidden" id="page-admin" aria-label="Trang admin">
+          <div class="card shadow-soft">
+            <h2>Admin – Xem tất cả tin nhắn</h2>
+            <p class="muted">
+              Chỉ tài khoản admin (admin / Huy130609@) mới thấy trang này. Dữ liệu chỉ lưu trong bộ nhớ server.
+            </p>
+            <div id="adminMessages" class="story-list"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
