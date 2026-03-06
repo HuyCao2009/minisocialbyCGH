@@ -731,3 +731,45 @@ window.addEventListener("DOMContentLoaded", () => {
   initProfileAvatarChange();
   initChat();
 });
+function initSearch() {
+  const input = document.getElementById("searchInput");
+  const results = document.getElementById("searchResults");
+
+  input.addEventListener("input", () => {
+    const keyword = input.value.toLowerCase().trim();
+
+    if (!keyword) {
+      results.innerHTML = "";
+      return;
+    }
+
+    let html = "";
+
+    // tìm bài viết
+    const postResults = state.posts.filter(p =>
+      (p.text && p.text.toLowerCase().includes(keyword)) ||
+      (p.username && p.username.toLowerCase().includes(keyword))
+    );
+
+    if (postResults.length > 0) {
+      html += "<h3>Kết quả bài viết</h3>";
+
+      postResults.forEach(p => {
+        html += `
+        <div class="search-item">
+          <b>${p.username}</b><br>
+          ${p.text || ""}
+        </div>
+        `;
+      });
+    }
+
+    if (html === "") {
+      html = "<p>Không tìm thấy kết quả</p>";
+    }
+
+    results.innerHTML = html;
+  });
+}
+
+initSearch();
